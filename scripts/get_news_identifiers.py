@@ -31,6 +31,9 @@ if __name__ == "__main__":
                         help='Output file name')
     parser.add_argument('-sd', dest='start_date', default='',
                         help='Starting date filter in YYYY-MM-DD format')
+    # add argument for search keyword(s)
+    parser.add_argument('-k', dest='keyword', default='',
+                        help='search keyword')
 
     args = parser.parse_args()
     
@@ -38,6 +41,10 @@ if __name__ == "__main__":
 
     # Initial query
     query = 'collection:"tvarchive"'
+
+    # Add search keyword 
+    if args.keyword:
+        query += ' AND "{}"'.format(args.keyword)
 
     # Add starting date
     if args.start_date:
