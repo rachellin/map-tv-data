@@ -5,6 +5,7 @@ import os
 import sys
 import optparse
 import csv
+import re
 
 import gzip
 import time
@@ -130,7 +131,7 @@ if __name__ == "__main__":
             writer = csv.DictWriter(o, fieldnames=sorted(list(columns)))
         else:
             o = open(options.outfile, "wt", encoding='utf-8', newline='')
-            writer = csv.DictWriter(o, fieldnames=sorted(list(columns)) + ['text'])
+            writer = csv.DictWriter(o, fieldnames=sorted(list(columns)) + ['text'] + ['mp4 link'])
             writer.writeheader()
     except:
         if os.path.isfile(options.outfile):
@@ -142,7 +143,7 @@ if __name__ == "__main__":
             writer = csv.DictWriter(o, fieldnames=sorted(list(columns)))
         else:
             o = open(options.outfile, "wb")
-            writer = csv.DictWriter(o, fieldnames=sorted(list(columns)) + ['text'])
+            writer = csv.DictWriter(o, fieldnames=sorted(list(columns)) + ['text'] + ['mp4 link'])
             writer.writeheader()
 
     count = 0
@@ -199,12 +200,38 @@ if __name__ == "__main__":
                 soup = BeautifulSoup(htmlstr, 'html.parser')
                 htmlstr = soup.prettify()
                 soup = BeautifulSoup(htmlstr, 'html.parser')
-                text = ""
-                for a in soup.find_all('div', {'class': 'snipin nosel'}):
-                    text += a.text.strip()
+                # text = ""
+                # for a in soup.find_all('div', {'class': 'snipin nosel'}):
+                #     text += a.text.strip()
 
-                parsed_data['text'] = text.encode('utf-8')
-                writer.writerow(parsed_data)
+                # separate transcript into 1-minute segments
+                # text = []
+                # for a in soup.find_all('div', {'class': 'snipin nosel'}):
+                #     text.append(a.text.strip().encode('utf-8'))
+
+                #parsed_data['text'] = text.encode('utf-8')
+                #writer.writerow(parsed_data)
+
+                # write new row for each 1-min segment
+                for i, a in enumerate(soup.find_all('div', {'class': 'snipin'})):
+                    # transcript
+                    text = a.text.strip()
+                    parsed_data['text'] = text.encode('utf-8')
+
+                    # construct mp4 download link
+                    start = 60*i
+                    end = start + 60
+                    pattern = "'(.*?)'"
+                    identifier = re.search(pattern, str(parsed_data["identifier"])).group().replace("'", "")
+                    mp4_link = "https://archive.org/download/{identifier}/{identifier}.mp4?t={start}/{end}&ignore=x.mp4".format(
+                        identifier=identifier,
+                        start=start,
+                        end=end
+                    )
+                    parsed_data['mp4 link'] = mp4_link
+                    
+                    # write to csv
+                    writer.writerow(parsed_data)
 
     f.close()
     o.close()
