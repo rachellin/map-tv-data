@@ -4,7 +4,7 @@ import csv
 # check the number of files in directory
 def count_files():
     count = 0
-    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\data\meta'
+    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\html-week'
     #dir_path = r'{}'.format(path)
     for path in os.scandir(dir_path):
         if path.is_file():
@@ -34,30 +34,49 @@ count_files()
 #   print(row)
 
 
-with open('./data/full-grab-check.csv') as csv_file:
-    csv_reader = csv.reader(csv_file, delimiter=',')
-    line_count = 0
-    wrong_count = 0
-    vid_count = -1
-    for row in csv_reader:
-        vid_count += 1
-    print("total videos for full grab: ", vid_count)
+# with open('./data/full-grab-check.csv') as csv_file:
+#     csv_reader = csv.reader(csv_file, delimiter=',')
+#     line_count = 0
+#     wrong_count = 0
+#     vid_count = -1
+#     for row in csv_reader:
+#         vid_count += 1
+#     print("total videos for full grab: ", vid_count)
 
 
-full_file = open("./data/full-grab-check.csv", "r")
-full_data = list(csv.reader(full_file, delimiter=","))
-full_file.close()
-full_data = [x[0] for x in full_data[1:]]
+# full_file = open("./data/full-grab-check.csv", "r")
+# full_data = list(csv.reader(full_file, delimiter=","))
+# full_file.close()
+# full_data = [x[0] for x in full_data[1:]]
 
-crawler_file = open("./tvscraper/one-month-check.csv", "r")
-crawler_data = list(csv.reader(crawler_file, delimiter=","))
-crawler_file.close()
-crawler_data = [x[0] for x in crawler_data[1:]]
+# crawler_file = open("./tvscraper/one-month-check.csv", "r")
+# crawler_data = list(csv.reader(crawler_file, delimiter=","))
+# crawler_file.close()
+# crawler_data = [x[0] for x in crawler_data[1:]]
 
-print("# of videos missing from full grab: ", len(list(set(crawler_data) - set(full_data))))
+# print("# of videos missing from full grab: ", len(list(set(crawler_data) - set(full_data))))
 
-print(len(full_data))
-print(len(set(full_data)))
+# print(len(full_data))
+# print(len(set(full_data)))
 
-print(len(crawler_data))
-print(len(set(crawler_data)))
+# print(len(crawler_data))
+# print(len(set(crawler_data)))
+
+keywords = ["gun", "guns", "firearm", "firearms", "assault rifle", "assault weapon", "shooting", "shootings", "shooter", "gunman", "gunmen"]
+minute_scores = []
+
+with open('./data/june-2022-week.csv') as csv_file:
+    #csv_reader = csv.reader(csv_file, delimiter=',').readlines()[1:141]
+    #csv_reader = csv_file.readlines()[0:141]
+    csv_reader = csv.DictReader(csv_file, delimiter=',')
+    for i, row in enumerate(csv_reader):
+        if i == 321:
+            transcript = row["text"]
+            minute_scores.append(0)
+            print(transcript)
+            for word in keywords: # TODO i should make all lowercase just in case there is uppercase
+                if word in transcript:
+                    minute_scores[0] = 1
+                    break
+            print(minute_scores)
+            

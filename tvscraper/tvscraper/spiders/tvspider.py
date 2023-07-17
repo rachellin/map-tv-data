@@ -8,8 +8,9 @@ class TvspiderSpider(scrapy.Spider):
     name = "tvspider"
     allowed_domains = ["archive.org"]
 
-    root_url = "https://archive.org/details/tv?q=(shooting)%20AND%20collection:(tvarchive)%20AND%20date:[2022-02-01%20TO%202022-03-01]%5D&page="
+    #root_url = "https://archive.org/details/tv?q=(shooting)%20AND%20collection:(tvarchive)%20AND%20date:[2022-02-01%20TO%202022-03-01]%5D&page="
     #root_url = "https://archive.org/details/tv?q=%28zendaya%29+AND+collection%3A%28tvarchive%29+AND+date%3A%5B2020-01-01+TO+2020-10-01%5D&page="
+    root_url = "https://archive.org/details/tv?q=%28shooting%29%20AND%20collection%3A%28tvarchive%29%20AND%20date%3A%5B2022-06-01%20TO%202022-06-08%5D&page="
     page_num = 1
     start_urls = []
 
