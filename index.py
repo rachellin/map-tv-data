@@ -1,17 +1,18 @@
 import os
 import csv 
+import json
 
 # check the number of files in directory
-def count_files():
-    count = 0
-    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\html-week'
-    #dir_path = r'{}'.format(path)
-    for path in os.scandir(dir_path):
-        if path.is_file():
-            count += 1
-    print('file count:', count)
+# def count_files():
+#     count = 0
+#     dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\html-week'
+#     #dir_path = r'{}'.format(path)
+#     for path in os.scandir(dir_path):
+#         if path.is_file():
+#             count += 1
+#     print('file count:', count)
 
-count_files()
+# count_files()
 
 
 # with open('./data/archive-out.csv') as csv_file:
@@ -65,18 +66,49 @@ count_files()
 keywords = ["gun", "guns", "firearm", "firearms", "assault rifle", "assault weapon", "shooting", "shootings", "shooter", "gunman", "gunmen"]
 minute_scores = []
 
-with open('./data/june-2022-week.csv') as csv_file:
-    #csv_reader = csv.reader(csv_file, delimiter=',').readlines()[1:141]
-    #csv_reader = csv_file.readlines()[0:141]
-    csv_reader = csv.DictReader(csv_file, delimiter=',')
-    for i, row in enumerate(csv_reader):
-        if i == 321:
-            transcript = row["text"]
-            minute_scores.append(0)
-            print(transcript)
-            for word in keywords: # TODO i should make all lowercase just in case there is uppercase
-                if word in transcript:
-                    minute_scores[0] = 1
-                    break
-            print(minute_scores)
+# with open('./data/june-2022-week.csv') as csv_file:
+#     #csv_reader = csv.reader(csv_file, delimiter=',').readlines()[1:141]
+#     #csv_reader = csv_file.readlines()[0:141]
+#     csv_reader = csv.DictReader(csv_file, delimiter=',')
+#     for i, row in enumerate(csv_reader):
+#         if i == 321:
+#             transcript = row["text"]
+#             minute_scores.append(0)
+#             print(transcript)
+#             for word in keywords: # TODO i should make all lowercase just in case there is uppercase
+#                 if word in transcript:
+#                     minute_scores[0] = 1
+#                     break
+#             print(minute_scores)
+
+
+# with open('./data/june-2022-week.csv') as csv_file:
+#     #csv_reader = csv.reader(csv_file, delimiter=',').readlines()[1:141]
+#     #csv_reader = csv_file.readlines()[0:141]
+#     csv_reader = csv.DictReader(csv_file, delimiter=',')
+#     #csv_reader = csv.reader(csv_file, delimiter=',')
+#     for i, row in enumerate(csv_reader):
+#         # if i >= 4528 and i <= 4571:
+#         #     print(row["text"], "\n")
+#         if row["identifier"] != "b'CNNW_20220602_020000_Don_Lemon_Tonight'":
+#         #for skip in range(61+42):
+#             next(csv_reader)
+#             print(i)
+
+
+# validation check for segment_vids
+def validate_segment_vids(segment_json):
+    segments_dict = {}
+    with open(segment_json) as json_file:
+        segments_dict = json.load(json_file)
+
+    minute_count = 0
+    for i, id in enumerate(segments_dict.keys()):
+        [start, end] = segments_dict[id]["relevant_segment"]
+        minute_count += (end - start)
+
+    print(minute_count)
+
+    # TODO compare with length of csv instead of manual
             
+validate_segment_vids('segment_vids.json')
