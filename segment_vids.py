@@ -62,6 +62,9 @@ def max_density(parent_list, sl_length):
 def get_segments():
   keywords = ["gun", "guns", "firearm", "firearms", "assault rifle", "assault weapon", "shooting", "shootings", "shooter", "shooters", "gunman", "gunmen"]
   # TODO non-keywords
+  irrelevant1 = ['blockbuster','movie','actor','actors','actress','director','game','novel','magic','spotify','netflix','concert','concerts','espn','nfl','mlb','album','earnings','hunters','dear','players']
+  irrelevant2 = ["spray gun", "flood gun", "emission gun", "nerf gun", "radar gun", "anti-aircraft gun", "starting gun", "water gun", "video game", "machine gun kelly", "guns n roses", "guns n \' roses", "smoking gun", "big guns", "young gun", "under the gun", "jumping the gun", "james bond"]
+  non_keywords = irrelevant1 + irrelevant2
 
   all_video_dicts = {}
   reset_count = 0
@@ -116,7 +119,10 @@ def get_segments():
                   minute_scores[current_minute] = 1
                   break
           # TODO set to 0 if includes non-GV keywords
-
+          for word in non_keywords:
+             if word in transcript:
+                minute_scores[current_minute] = 0
+                break
 
           current_minute += 1
               
