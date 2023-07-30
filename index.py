@@ -3,16 +3,16 @@ import csv
 import json
 
 # check the number of files in directory
-# def count_files():
-#     count = 0
-#     dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\html-week'
-#     #dir_path = r'{}'.format(path)
-#     for path in os.scandir(dir_path):
-#         if path.is_file():
-#             count += 1
-#     print('file count:', count)
+def count_files():
+    count = 0
+    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\data\meta-feb21'
+    #dir_path = r'{}'.format(path)
+    for path in os.scandir(dir_path):
+        if path.is_file():
+            count += 1
+    print('file count:', count)
 
-# count_files()
+count_files()
 
 
 # with open('./data/archive-out.csv') as csv_file:
@@ -102,6 +102,7 @@ def validate_segment_vids(segment_json):
     with open(segment_json) as json_file:
         segments_dict = json.load(json_file)
 
+    print(segments_dict[list(segments_dict.keys())[-1]])
     minute_count = 0
     for i, id in enumerate(segments_dict.keys()):
         [start, end] = segments_dict[id]["relevant_segment"]
