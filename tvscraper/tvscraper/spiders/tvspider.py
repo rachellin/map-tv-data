@@ -20,16 +20,22 @@ class TvspiderSpider(scrapy.Spider):
     # url = root_url + str(page_num)
     # start_urls.append(url)
 
-    def __init__(self, start="2014-01-01", end="NULL", *args, **kwargs):
+    csv_file = ""
+
+    custom_settings = {
+        'FEEDS': { '%(csv_file)s.csv': { 'format': 'csv',}}
+    }
+
+    def __init__(self, start="2014-01-01", end="NULL", outfile=None, *args, **kwargs):
         super(TvspiderSpider, self).__init__(*args, **kwargs)
         self.root_url = f"https://archive.org/details/tv?q=%28shooting%29%20AND%20collection%3A%28tvarchive%29%20AND%20date%3A%5B{start}%20TO%20{end}%5D&page="
         self.page_num = 1
         self.start_urls = []
 
-        print(self.root_url)
-
         self.url = self.root_url + str(self.page_num)
         self.start_urls.append(self.url)
+
+        self.csv_file = outfile
 
     def parse(self, response):
         # check whether page has results
