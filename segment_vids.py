@@ -73,19 +73,19 @@ def score_minute(row, minute_scores, current_minute):
   keywords = ["gun", "guns", "firearm", "firearms", "assault rifle", "assault weapon", "shooting", "shootings", "shooter", "shooters", "gunman", "gunmen"]
   # TODO non-keywords
   irrelevant1 = ['blockbuster','movie','actor','actors','actress','director','game','novel','magic','spotify','netflix','concert','concerts','espn','nfl','mlb','album','earnings','hunters','dear','players']
-  irrelevant2 = ["spray gun", "flood gun", "emission gun", "nerf gun", "radar gun", "anti-aircraft gun", "starting gun", "water gun", "video game", "machine gun kelly", "guns n roses", "guns n \' roses", "smoking gun", "big guns", "young gun", "under the gun", "jumping the gun", "james bond"]
+  irrelevant2 = ["spray gun", "flood gun", "emission gun", "nerf gun", "radar gun", "anti-aircraft gun", "starting gun", "water gun", "video game", "machine gun kelly", "guns n roses", "guns n \' roses", "smoking gun", "big guns", "young gun", "under the gun", "jumping the gun", "james bond", "top gun"]
   non_keywords = irrelevant1 + irrelevant2
 
   # for this 1-min segment
   transcript = row["text"]
   minute_scores.append(0)
   for word in keywords: # TODO i should make all lowercase just in case there is uppercase
-      if word in transcript.lower():
+      if word in transcript.lower().split():
           minute_scores[current_minute] = 1
           break
   # TODO set to 0 if includes non-GV keywords
   for word in non_keywords:
-      if word in transcript:
+      if word in transcript.lower().split():
         minute_scores[current_minute] = 0
         break
   return minute_scores
@@ -164,8 +164,58 @@ def slice_csv(grouped_videos, out_file, segments_file):
     writer = csv.DictWriter(csvfile, fieldnames = out_dict_list[0].keys(), lineterminator = '\n')
     writer.writeheader()
     writer.writerows(out_dict_list)
+
+
+# throw out irrelevant videos after slicing for relevant segments
+def filter_videos(in_file):
+  irrelevant1 = ['blockbuster','movie','film','actor','actors','actress','director','game','novel','magic','spotify','netflix','concert','concerts','espn','nfl','mlb','album','earnings','hunters','dear','players']
+  irrelevant2 = ["spray gun", "flood gun", "emission gun", "nerf gun", "radar gun", "anti-aircraft gun", "starting gun", "water gun", "video game", "machine gun kelly", "guns n roses", "guns n \' roses", "smoking gun", "big guns", "young gun", "under the gun", "jumping the gun", "james bond", "top gun"]
+  non_keywords = irrelevant1 + irrelevant2
+  '''
+  step 1: throw out videos that don't meet certain minimum for relevant segment length (# or percentage) TODO
+  step 2: throw out videos that meet minimum density of exclusionary keywords 
+  step 3: write to new csv
+
+  step 2: for each id in grouped_videos
+    1. for each minute, update keyword_count for the # of exclusionary keywords
+    2. if keyword_count does NOT meet threshold, add to final_videos
+  '''
+  # TODO: maybe i don't need to write to csv in slice_csv if i'm just going to use it to create another new csv...?
+  # TODO: videos with relevant segment [0:0] should be thrown out by default but check that the seth meyers video isn't there
+  final_videos = []
+  grouped_videos = group_videos(in_file)
+
+  scrapped_list = []
+
+  # throw out videos that meet minimum density of exclusionary keywords 
+  # counts the number of minutes with exclusionary keywords
+  for vid_count, id in enumerate(grouped_videos.keys()):
+    keyword_count = 0
+    keywords = []
+    for i, minute in enumerate(grouped_videos[id]):
+      for word in non_keywords:
+        if word in minute["text"].lower().split():
+          keyword_count += 1
+          keywords.append(word)
+          break
+    # TODO: change threshold
+    if (keyword_count/len(grouped_videos[id])) < 0.5:
+      final_videos.extend(grouped_videos[id])
+    else:
+      scrapped_list.append(id)
+      print(id)
+      print(keywords, "\n\n")
+    #print("done with {} videos: {}".format(vid_count+1, id))
+
+  print("\n\n {} total videos".format(len(final_videos)))
+  # for x in scrapped_list:
+  #   print(x)
+  print("{} scrapped".format(len(scrapped_list)))
+
+
       
    
-grouped_videos = group_videos('./data/june-2022-week.csv')
+#grouped_videos = group_videos('./data/june-2022-week.csv')
 #get_segments(grouped_videos)        
-slice_csv(grouped_videos, "./data/june-2022-week-sliced.csv", "segment_vids.json")
+#slice_csv(grouped_videos, "./data/june-2022-week-sliced.csv", "segment_vids.json")
+filter_videos("./data/june22-sliced.csv")
