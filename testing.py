@@ -5,7 +5,7 @@ import json
 # check the number of files in directory
 def count_files():
     count = 0
-    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\data\meta-feb21'
+    dir_path = r'C:\Users\lynns\coding\corners\map-tv-data\html-aug12'
     #dir_path = r'{}'.format(path)
     for path in os.scandir(dir_path):
         if path.is_file():
@@ -112,4 +112,4 @@ def validate_segment_vids(segment_json):
 
     # TODO compare with length of csv instead of manual
             
-validate_segment_vids('segment_vids.json')
+#validate_segment_vids('segment_vids.json')
