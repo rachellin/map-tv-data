@@ -91,7 +91,7 @@ def score_minute(row, minute_scores, current_minute):
   return minute_scores
 
 # TODO restructure this function
-def get_segments(grouped_videos):
+def get_segments(grouped_videos, outfile):
   all_video_dicts = {}
 
   # dict_keys = list(grouped_videos.keys())
@@ -134,7 +134,7 @@ def get_segments(grouped_videos):
   json_object = jsbeautifier.beautify(json.dumps(all_video_dicts), options)
   
   # write to json file
-  with open("segment_vids2.json", "w") as outfile:
+  with open(outfile, "w") as outfile:
     outfile.write(json_object)
 
   return grouped_videos
@@ -218,4 +218,4 @@ def filter_videos(in_file):
 #grouped_videos = group_videos('./data/june-2022-week.csv')
 #get_segments(grouped_videos)        
 #slice_csv(grouped_videos, "./data/june-2022-week-sliced.csv", "segment_vids.json")
-filter_videos("./data/june22-sliced.csv")
+#filter_videos("./data/june22-sliced.csv")

@@ -32,8 +32,6 @@ def clean_text(in_file, out_file):
             token.text
             for token in nlp(cleaned_text)
             if not (
-                token.is_punct
-                or
                 token.is_space
             )
         ]
@@ -48,12 +46,11 @@ def clean_text(in_file, out_file):
     print("writing data...")
     with open(out_file, 'w') as csv_file:
         fieldnames = list(tokenized[0].keys())
-        writer = csv.DictWriter(csv_file, fieldnames = fieldnames)
+        writer = csv.DictWriter(csv_file, fieldnames = fieldnames, lineterminator = '\n')
         writer.writeheader()
         writer.writerows(tokenized)
 
-# TODO: get rid of extra line between each row
-clean_text("./data/june22-sliced.csv", "./data/june22-sliced-tokenized.csv")
+clean_text("./data/june22-month-sliced.csv", "./data/june22-month-tokenized.csv")
 
 
 # split with re.split(r'\s{2,}', joined)
